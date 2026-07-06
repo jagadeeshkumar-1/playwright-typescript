@@ -27,9 +27,14 @@ export class CartPage {
 
   async clearCart() {
     const deleteButtons = this.page.locator('.btn.btn-danger');
-    while (await deleteButtons.count() > 0) {
+    let count = await deleteButtons.count();
+    while (count > 0) {
       await deleteButtons.first().click();
-      await this.page.waitForTimeout(500);
+      await this.page.waitForFunction(
+        (prev) => document.querySelectorAll('.btn.btn-danger').length < prev,
+        count
+      );
+      count = await deleteButtons.count();
     }
   }
 
