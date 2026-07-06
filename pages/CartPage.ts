@@ -22,7 +22,15 @@ export class CartPage {
   }
 
   async BuyNowButton() {
-    return this.page.locator('button:has-text("Buy Now")');
+    return this.page.locator('button:has-text("Buy Now")').first();
+  }
+
+  async clearCart() {
+    const deleteButtons = this.page.locator('.btn.btn-danger');
+    while (await deleteButtons.count() > 0) {
+      await deleteButtons.first().click();
+      await this.page.waitForTimeout(500);
+    }
   }
 
   async ClickdeleteproductButton() {
