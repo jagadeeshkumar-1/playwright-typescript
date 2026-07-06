@@ -3,7 +3,7 @@ import { FileValidationUtil } from '../Utils/FileValidationUtil';
 
 const fileValidationUtil = new FileValidationUtil();
 
-test.describe('Checkout Page Tests', () => {
+test.describe('Checkout Page Tests', { tag: '@regression' }, () => {
   test.beforeEach(async ({ productPage, cartPage, checkoutPage }) => {
     await productPage.gotoProductDetailPage();
     await productPage.goToCart();
@@ -16,7 +16,7 @@ test.describe('Checkout Page Tests', () => {
 
   });
 
-  test('should navigate to checkout page', async ({ checkoutPage, page }) => {
+  test('should navigate to checkout page', { tag: '@smoke' }, async ({ checkoutPage, page }) => {
     await expect(page).toHaveURL(/\/client\/#\/dashboard\/order/);
   });
 
@@ -25,7 +25,7 @@ test.describe('Checkout Page Tests', () => {
     await expect(countryField).toBeVisible();
  });
 
- test('place the order after filling the checkout form', async ({ checkoutPage, page }) => {
+ test('place the order after filling the checkout form', { tag: '@smoke' }, async ({ checkoutPage, page }) => {
     const countryField = await checkoutPage.getCountry();
     await countryField.pressSequentially('India');
     await page.getByText('India', { exact: true }).click();

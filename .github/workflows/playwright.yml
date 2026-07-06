@@ -4,6 +4,17 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - smoke
+          - regression
+          - all
 permissions:
   contents: read
   pages: write
@@ -27,7 +38,20 @@ jobs:
       env:
         TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
         TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
-      run: npx playwright test --project=chromium
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "Running smoke tests for PR"
+          npx playwright test --grep @smoke --project=chromium
+        elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.suite }}" = "smoke" ]; then
+          echo "Running smoke tests"
+          npx playwright test --grep @smoke --project=chromium
+        elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.suite }}" = "regression" ]; then
+          echo "Running regression tests"
+          npx playwright test --grep @regression --project=chromium
+        else
+          echo "Running all tests"
+          npx playwright test --project=chromium
+        fi
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:

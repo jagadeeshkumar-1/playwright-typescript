@@ -1,6 +1,6 @@
 import {test, expect} from '../fixtures/BaseTest';
 
-test.describe('Product Details Page Tests', () => {
+test.describe('Product Details Page Tests', { tag: '@regression' }, () => {
   // No manual login here — the 'setup' project already authenticated once
   // and every project below reuses that session via storageState.
 
@@ -9,7 +9,7 @@ test.describe('Product Details Page Tests', () => {
     await productPage.viewProduct('ADIDAS');
   });
 
-  test('should navigate to product details page and add product to cart', async ({ productPage, page }) => {
+  test('should navigate to product details page and add product to cart', { tag: '@smoke' }, async ({ productPage, page }) => {
    
     await productPage.addToCart();
     await productPage.goToCart();

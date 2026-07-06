@@ -11,6 +11,8 @@
     "test:headed": "npx playwright test --headed",
     "test:trace": "npx playwright test --trace on",
     "test:smoke": "npx playwright test --grep @smoke",
+    "test:regression": "npx playwright test --grep @regression",
+    "test:all": "npx playwright test",
     "allure:report": "node scripts/generateAllureReport.js && allure open ./allure-report"
   },
   "keywords": [],

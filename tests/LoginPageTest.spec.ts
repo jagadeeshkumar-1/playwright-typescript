@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/BaseTest';
 
-test.describe('Login Page Tests', () => {
+test.describe('Login Page Tests', { tag: '@regression' }, () => {
   // These tests exercise the unauthenticated flow, so ignore the
   // project-level storageState (which starts every other test pre-logged-in).
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -13,7 +13,7 @@ test.describe('Login Page Tests', () => {
     await expect(page).toHaveTitle("Let's Shop");
     });
 
-    test('should login with valid credentials', async ({ loginPage, page }) => {
+    test('should login with valid credentials', { tag: '@smoke' }, async ({ loginPage, page }) => {
     await loginPage.login('snr@yopmail.com', 'bbLUr.EXxMK@G5v');
     await expect(page).toHaveURL('/client/#/dashboard/dash');
     });

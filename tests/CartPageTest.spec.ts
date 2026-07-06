@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/BaseTest';
 
-test.describe('Cart Page Tests', () => {
+test.describe('Cart Page Tests', { tag: '@regression' }, () => {
 
  test.beforeEach(async ({ productPage }) => {
     await productPage.gotoProductDetailPage();
@@ -9,7 +9,7 @@ test.describe('Cart Page Tests', () => {
     await productPage.goToCart();
   });
   
-  test('should navigate to cart page', async ({ productPage, page }) => {
+  test('should navigate to cart page', { tag: '@smoke' }, async ({ productPage, page }) => {
     await expect(page).toHaveURL('/client/#/dashboard/cart');
   });
 
