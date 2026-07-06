@@ -1,0 +1,48 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: lts/*
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+    - name: Set up JDK for Allure CLI
+      if: ${{ !cancelled() }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - name: Install Allure CLI
+      if: ${{ !cancelled() }}
+      run: |
+        curl -o allure.zip -Ls https://github.com/allure-framework/allure2/releases/download/2.44.0/allure-2.44.0.zip
+        unzip -q allure.zip -d "$HOME"
+        echo "$HOME/allure-2.44.0/bin" >> "$GITHUB_PATH"
+    - name: Generate Allure report
+      if: ${{ !cancelled() }}
+      run: allure generate ./allure-results --clean -o ./allure-report
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: allure-report
+        path: allure-report/
+        retention-days: 30

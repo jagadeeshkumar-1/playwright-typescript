@@ -1,0 +1,24 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:report": "npx playwright show-report",
+    "test:debug": "npx playwright test --debug",
+    "test:headed": "npx playwright test --headed",
+    "test:trace": "npx playwright test --trace on",
+    "test:smoke": "npx playwright test --grep @smoke",
+    "allure:report": "node scripts/generateAllureReport.js && allure open ./allure-report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.1.0",
+    "allure-playwright": "^3.10.2"
+  }
+}
