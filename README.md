@@ -35,12 +35,13 @@ Automated UI test suite for [rahulshettyacademy.com](https://rahulshettyacademy.
 ├── scripts/
 │   └── generateAllureReport.js # carries Allure history forward so the Trend graph accumulates
 ├── storageInfo/
-│   └── auth.setup.ts           # Logs in once, saves session to playwright/.auth/user.json
+│   └── session.storage.ts      # Reference only — demonstrates sessionStorage capture technique (not part of active test suite)
 ├── tests/
+│   ├── auth.setup.ts           # Logs in once, saves session to playwright/.auth/user.json
 │   ├── LoginPageTest.spec.ts
 │   ├── ProductDetailsTest.spec.ts
 │   ├── CartPageTest.spec.ts
-│   └── OrderPageTest.spec.ts
+│   └── CheckOutPage.spec.ts
 ├── playwright/.auth/           # Saved login session (gitignored — do not commit)
 ├── screenshots/                # Failure screenshots (gitignored)
 ├── allure-results/             # Raw Allure result JSON for the last run (gitignored)
@@ -96,7 +97,7 @@ automatic per test, not something the framework code needs to manage.
 Logging in through the UI inside a `beforeEach` for every test works, but it's slow and adds an
 avoidable point of flakiness to every single test. Instead:
 
-- `storageInfo/auth.setup.ts` is a one-time "setup" test that logs in through the UI and saves the
+- `tests/auth.setup.ts` is a one-time "setup" test that logs in through the UI and saves the
   authenticated session to `playwright/.auth/user.json` via `page.context().storageState()`.
 - `playwright.config.ts` defines a `setup` project (matching `*.setup.ts` files) that the `chromium`,
   `firefox`, and `webkit` projects depend on (`dependencies: ['setup']`), and each of those projects
@@ -317,6 +318,24 @@ anyone manually deleting the folder.
 
 Report generation/viewing is a deliberate manual step — `npm test` only produces `allure-results/`.
 Run `npm run allure:report` whenever you actually want to view the report.
+
+## CI / GitHub Actions
+
+The workflow at `.github/workflows/playwright.yml` runs on every push or pull request to `main`.
+
+**Required GitHub Secrets** (add under repo → Settings → Secrets and variables → Actions → Repository secrets):
+
+| Secret name      | Value                     |
+|------------------|---------------------------|
+| `TEST_USERNAME`  | Test account email        |
+| `TEST_PASSWORD`  | Test account password     |
+
+The workflow:
+1. Checks out the repo and installs Node + Playwright browsers
+2. Creates the `playwright/.auth/` directory
+3. Runs all Playwright tests (setup project logs in first, saves session)
+4. Uploads the Playwright HTML report as an artifact (retained 30 days)
+5. Installs Allure CLI and generates + uploads the Allure report as an artifact (retained 30 days)
 
 ### npm scripts use `:` instead of spaces
 
