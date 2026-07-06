@@ -330,12 +330,26 @@ The workflow at `.github/workflows/playwright.yml` runs on every push or pull re
 | `TEST_USERNAME`  | Test account email        |
 | `TEST_PASSWORD`  | Test account password     |
 
-The workflow:
-1. Checks out the repo and installs Node + Playwright browsers
+The workflow behaves differently based on trigger:
+
+| Trigger | Tests run |
+|---|---|
+| Push to `main` | All tests |
+| Pull Request | `@smoke` only (fast gate) |
+| Manual → `smoke` | `@smoke` tagged tests only |
+| Manual → `regression` | `@regression` tagged tests only |
+| Manual → `all` | All tests |
+
+To run manually: **Actions → Playwright Tests → Run workflow → pick a suite**.
+
+The workflow steps:
+1. Checks out the repo and installs Node + Playwright Chromium
 2. Creates the `playwright/.auth/` directory
-3. Runs all Playwright tests (setup project logs in first, saves session)
+3. Runs the selected test suite (setup project logs in first, saves session)
 4. Uploads the Playwright HTML report as an artifact (retained 30 days)
-5. Installs Allure CLI and generates + uploads the Allure report as an artifact (retained 30 days)
+5. Installs Allure CLI, generates the Allure report, and deploys it to **GitHub Pages**
+
+**Live Allure Report:** https://jagadeeshkumar-1.github.io/playwright-typescript/
 
 ### npm scripts use `:` instead of spaces
 
@@ -347,12 +361,14 @@ via `npm run test report` (npm just runs `test` with `report` as an arg). Script
 ## Running Tests
 
 ```bash
-npm test                 # run everything, all 3 browsers
+npm test                 # run everything (all browsers per config)
+npm run test:smoke       # only tests tagged @smoke
+npm run test:regression  # only tests tagged @regression
+npm run test:all         # all tests explicitly
 npm run test:ui          # Playwright's interactive UI mode
 npm run test:headed      # run with a visible browser window
 npm run test:debug       # step through with the Playwright inspector
 npm run test:trace       # force trace recording for every test
-npm run test:smoke       # only tests tagged @smoke
 npm run test:report      # re-open the Playwright HTML report from the last run
 
 npm run allure:report    # regenerate (from the last allure-results) + open the Allure report
@@ -365,3 +381,11 @@ The Playwright HTML report auto-opens after a local run; `test:report` is just f
 previous run's report without re-running tests. The Allure report is fully separate and on-demand —
 run any test script to produce `allure-results/`, then `npm run allure:report` whenever you actually
 want to see it.
+
+## Test Results
+
+The Allure report is automatically published to GitHub Pages after every push to `main`.
+
+**Live report:** https://jagadeeshkumar-1.github.io/playwright-typescript/
+
+![Allure Report](docs/allure-report.png)
