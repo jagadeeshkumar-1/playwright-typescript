@@ -17,7 +17,12 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Create auth directory
+      run: mkdir -p playwright/.auth
     - name: Run Playwright tests
+      env:
+        TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
       run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
@@ -39,7 +44,12 @@ jobs:
         echo "$HOME/allure-2.44.0/bin" >> "$GITHUB_PATH"
     - name: Generate Allure report
       if: ${{ !cancelled() }}
-      run: allure generate ./allure-results --clean -o ./allure-report
+      run: |
+        if [ -d "./allure-results" ] && [ "$(ls -A ./allure-results)" ]; then
+          allure generate ./allure-results --clean -o ./allure-report
+        else
+          echo "No allure-results found, skipping report generation"
+        fi
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
