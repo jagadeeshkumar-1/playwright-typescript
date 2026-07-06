@@ -2,7 +2,7 @@ import { test as base, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { CartPage } from '../pages/CartPage';
-import { CheckoutPage } from '../pages/CheckoutPage';
+import { CheckoutPage } from '../pages/CheckOutPage';
 import { ScreenshotsUtil } from '../Utils/ScreenshotsUtil';
 import { ReportingUtil } from '../Utils/ReportingUtil';
 
